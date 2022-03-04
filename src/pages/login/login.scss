@@ -1,0 +1,95 @@
+@import '../../common/color.scss';
+.login{
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background-image: url("../../image/signup.jpg");
+    background-size: 100%;
+  
+    &__box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba($color:$color-white, $alpha: 1);
+      width: 35rem;
+      height: 35rem;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-transform: capitalize;
+      font-size: 1.5rem;
+    }
+    &__head {
+      font-size: 5rem;
+      color:$color-primary-dark;
+    }
+    &__form {
+      margin-top: 1rem;
+    }
+    &__item {
+      position: relative;
+      height: 5rem;
+      margin-bottom: 2.5rem;
+    }
+    &__label {
+      position: absolute;
+      top: 1.1rem;
+      left: 1rem;
+      padding: 0 0.5rem;
+      background-color: transparent;
+      transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+    }
+    &__input {
+      width: 100%;
+      height: 100%;
+      border: 2px solid $color-grey-1;
+      border-radius: 5px;
+      font-size: inherit;
+      font-weight: inherit;
+      background:$color-white;
+      color: inherit;
+      padding: 1.25rem;
+      outline: none;
+      &:hover {
+        border-color:$color-primary-light;
+      }
+      &:focus {
+        border-color: $color-primary;
+      }
+    }
+    &__action {
+      font-weight: 400;
+      font-size: 1.3rem;
+      margin-top: 4rem;
+      a {
+        font-weight: 700;
+        margin-left: 0.5rem;
+        color:$color-primary;
+      }
+    }
+    &__btn {
+      display: block;
+      margin-top: 1rem;
+      width: 100%;
+      background-color: $color-primary;
+      border-radius: 10px;
+      padding: 1rem;
+      text-transform: capitalize;
+      font-size: 2rem;
+      font-weight: 500;
+      color: $color-white;
+      transition: background-color 200ms ease-in;
+      &:hover {
+        background-color: $color-primary-dark;
+      }
+    }
+  }
+
+  .login__input:focus ~ .login__label,
+  .login__input:not(:placeholder-shown).login__input:not(:focus)
+    ~ .login__label {
+    top: -0.5rem;
+    left: 0.8rem;
+    font-size: 1.2rem;
+    background-color: $color-white;
+  }
