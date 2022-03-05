@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { useState } from "react";
 import { Input } from "../../components";
 import { validate } from "../../validate";
-import {auth,fs } from "../../config/config";
-import { createUserWithEmailAndPassword} from "firebase/auth";
-import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import {collection, addDoc} from 'firebase/firestore'
+import { auth , fs} from "../../config/configFirebase";
 import "./signup.scss";
 const SignUp = () => {
-  const history=useNavigate();
   const initialValues = { username: "", email: "", password: "" };
+  const navigate=useNavigate();
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
@@ -18,33 +18,35 @@ const SignUp = () => {
       return { ...preState, [name]: value };
     });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormErrors(validate(formValues));
-\    createUserWithEmailAndPassword(auth,formValues.email, formValues.password)
-      .then((credentials) => {
-        fs.collection("user")
-          .doc(credentials.user.uid)
-          .set({
-            fullName: formValues.username,
-            Email: formValues.email,
-            Password: formValues.password,
-          }).then(() => {
-            setIsSubmit(true);
-            setFormValues(initialValues);
-            setFormErrors({});
-            setTimeout(()=>{
-              setIsSubmit(false);
-              history.push("./login")
-            },300)
-          })
-          .catch((error) => {
-            setFormErrors(error.message);
-          });
-      }).catch((error) => {
-        setFormErrors(error.message);
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        formValues.email,
+        formValues.password
+      );
+       await addDoc(collection(fs, 'users'), {
+        FullName:formValues.username,
+        Email:formValues.email,
+        Password:formValues.password,
       });
+      setIsSubmit(true);
+      setFormValues(initialValues);
+      setTimeout(() => {
+        setIsSubmit(false);
+        navigate('/login')
+      }, 3000)
+    } catch (err) {
+      setFormValues(initialValues);
+      setFormErrors(preState=>{
+        return{...preState,message:err.message}
+      })
+    }
+    ;
   };
+
   return (
     <div className="signup">
       {Object.keys(formErrors).length === 0 && isSubmit && (
@@ -87,6 +89,7 @@ const SignUp = () => {
             </span>
             <button className="signup__btn">signup</button>
           </div>
+          <p style={{marginTop:"2rem"}}>{formErrors.message}</p>
         </form>
       </div>
     </div>
