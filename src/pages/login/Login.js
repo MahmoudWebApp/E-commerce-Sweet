@@ -61,7 +61,7 @@ const Login = () => {
           <div className="login__action">
             <span>
               don,t have an account signup
-              <Link to="/login">here</Link>
+              <Link to="/signup">here</Link>
             </span>
             <button className="login__btn">login</button>
           </div>

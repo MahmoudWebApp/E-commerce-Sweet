@@ -1,14 +1,14 @@
-import { Link , useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Input } from "../../components";
 import { validate } from "../../validate";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import {collection, addDoc} from 'firebase/firestore'
-import { auth , fs} from "../../config/configFirebase";
+import {doc, setDoc } from "firebase/firestore";
+import { auth, fs } from "../../config/configFirebase";
 import "./signup.scss";
 const SignUp = () => {
   const initialValues = { username: "", email: "", password: "" };
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
@@ -22,29 +22,29 @@ const SignUp = () => {
     e.preventDefault();
     setFormErrors(validate(formValues));
     try {
-      await createUserWithEmailAndPassword(
+      const createUser = await createUserWithEmailAndPassword(
         auth,
         formValues.email,
         formValues.password
       );
-       await addDoc(collection(fs, 'users'), {
-        FullName:formValues.username,
-        Email:formValues.email,
-        Password:formValues.password,
+      const userId = createUser.user.uid;
+      await setDoc(doc(fs, 'users',userId), {
+        FullName: formValues.username,
+        Email: formValues.email,
+        Password: formValues.password,
       });
       setIsSubmit(true);
       setFormValues(initialValues);
       setTimeout(() => {
         setIsSubmit(false);
-        navigate('/login')
-      }, 3000)
+        navigate("/login");
+      }, 3000);
     } catch (err) {
       setFormValues(initialValues);
-      setFormErrors(preState=>{
-        return{...preState,message:err.message}
-      })
+      setFormErrors((preState) => {
+        return { ...preState, message: err.message };
+      });
     }
-    ;
   };
 
   return (
@@ -89,7 +89,7 @@ const SignUp = () => {
             </span>
             <button className="signup__btn">signup</button>
           </div>
-          <p style={{marginTop:"2rem"}}>{formErrors.message}</p>
+          <p style={{ marginTop: "2rem" }}>{formErrors.message}</p>
         </form>
       </div>
     </div>
